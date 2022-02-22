@@ -23,6 +23,7 @@ end
 local function loadmap(id)
   local lang = sys.getenv("LC_LOCALE") or "en_US"
   local fullid = lang .. "-" .. id
+
   if mapcache[fullid] then return mapcache[fullid] end
 
   local path, err = findmap(id, lang)

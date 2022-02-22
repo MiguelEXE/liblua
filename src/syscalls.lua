@@ -4,7 +4,7 @@ local lib = {}
 
 setmetatable(lib, {__index = function(key)
   return function(...)
-    return syscall(key, ...)
+    return coroutine.yield("syscall", key, ...)
   end
 end})
 
