@@ -98,6 +98,18 @@ function package.searchpath(name, path, sep, rep)
 end
 
 function _G.loadfile(path, mode, env)
+  checkArg(1, path, "string")
+  checkArg(2, mode, "string", "nil")
+  checkArg(3, env, "table", "nil")
+  local fd, err = syscall("open", path, "r")
+  if not fd then
+    return nil, err
+  end
+
+  local data = syscall("read", fd, "a")
+  syscall("close", fd)
+
+  return load(data, "="..path, mode, env or _G)
 end
 
 function _G.require(mod)
