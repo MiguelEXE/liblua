@@ -22,6 +22,10 @@ end, __newindex = function() end})
 
 package.preload = {}
 
+local function loadlib()
+  error("loadlib not implemented yet")
+end
+
 package.searchers = {
   -- package.preload
   function(mod)
