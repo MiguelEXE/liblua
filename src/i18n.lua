@@ -1,5 +1,7 @@
 -- localization! --
 
+-- TODO: needs a bunch of work
+
 local sys = require("syscalls")
 local stdio = require("stdio")
 
