@@ -116,6 +116,11 @@ function _G.loadfile(path, mode, env)
   return load(data, "="..path, mode, env or _G)
 end
 
+function _G.dofile(path)
+  checkArg(1, path, "string")
+  return assert(loadfile(path))()
+end
+
 function _G.require(mod)
   checkArg(1, mod, "string")
 
