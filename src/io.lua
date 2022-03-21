@@ -29,6 +29,10 @@ local _iost = {
     return sys.seek(self.fd, whence, offset)
   end,
 
+  flush = function(self)
+    return sys.flush(self.fd)
+  end,
+
   close = function(self)
     return sys.close(self.fd)
   end,
@@ -66,6 +70,46 @@ end
 
 function lib.write(...)
   return lib.stdout:write(...)
+end
+
+function lib.flush()
+  return lib.stdout:flush()
+end
+
+local function check(file)
+  checkArg(1, file, "table")
+  if not file.fd then error("bad argument #1 (bad file descriptor)", 2) end
+  return true
+end
+
+function lib.input(file)
+  if file then
+    if type(file) == "string" then file = assert(io.open(file, "r")) end
+    check(file)
+    lib.stdin = file
+  end
+  return lib.stdin
+end
+
+function lib.output(file)
+  if file then
+    if type(file) == "string" then file = assert(io.open(file, "w")) end
+    check(file)
+    lib.stdout = file
+  end
+  return lib.stdout
+end
+
+function _G.print(...)
+  local args = table.pack(...)
+
+  for i=1, args.n, 1 do
+    args[i] = tostring(args[i])
+  end
+
+  lib.stdout:write(table.concat(args, "\t"), "\n")
+
+  return true
 end
 
 return lib
