@@ -141,3 +141,6 @@ function _G.require(mod)
 
   error(emsg, 2)
 end
+
+-- Load io here too
+_G.io = require("io")
