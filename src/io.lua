@@ -92,6 +92,7 @@ function lib.input(file)
   if file then
     if type(file) == "string" then file = assert(io.open(file, "r")) end
     check(file)
+    lib.stdin:close()
     lib.stdin = file
   end
   return lib.stdin
@@ -101,9 +102,28 @@ function lib.output(file)
   if file then
     if type(file) == "string" then file = assert(io.open(file, "w")) end
     check(file)
+    lib.stdout:close()
     lib.stdout = file
   end
   return lib.stdout
+end
+
+function lib.popen(command, mode)
+  checkArg(1, command, "string")
+  checkArg(2, mode, "string")
+  local infd, outfd = sys.pipe()
+  sys.fork(function()
+    if mode == "r" then
+      sys.dup2(1, infd)
+    else
+      sys.dup2(0, outfd)
+    end
+    local tokens = require("sh").split(command)
+    tokens[0] = table.remove(tokens, 1)
+    local resolved, failed = require("sh").resolve(tokens[0])
+    if not resolved then io.stderr:write("sh: ", failed, "\n") return end
+    sys.execve(require("sh").resolve(tokens[0]), tokens)
+  end)
 end
 
 function _G.print(...)
