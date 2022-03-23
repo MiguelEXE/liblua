@@ -17,6 +17,12 @@ local _iost = {
     return table.unpack(results, 1, select("#", ...))
   end,
 
+  lines = function(self, fmt)
+    return function()
+      return self:read(fmt or "l")
+    end
+  end,
+
   write = function(self, ...)
     local to_write = table.pack(...)
     for _, data in ipairs(to_write) do
