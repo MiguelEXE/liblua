@@ -13,7 +13,7 @@ local mapcache = {}
 local function findmap(mapid, lang)
   local path = sys.getenv("LC_PATH") or
     "/usr/share/lang/#-?.lua;/etc/lang/#-?.lua"
-  for search in path:gmatch() do
+  for search in path:gmatch("[^;]+") do
     search = search:gsub("#", lang):gsub("%?", mapid)
     if sys.stat(search) then
       return search

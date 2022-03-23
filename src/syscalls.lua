@@ -12,7 +12,7 @@ local function unpackResult(result)
   return table.unpack(result, 1, result.n)
 end
 
-setmetatable(lib, {__index = function(key)
+setmetatable(lib, {__index = function(_, key)
   lib[key] = function(...)
     local result = table.pack(coroutine.yield("syscall", key, ...))
     return unpackResult(result)
