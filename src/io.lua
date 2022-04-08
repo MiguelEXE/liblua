@@ -4,7 +4,7 @@
 -- implementations of this library.
 
 local sys = require("syscalls")
-local get_err = require("errors").err
+local get_err = require("posix.errno").errno
 
 local lib = {}
 
@@ -49,8 +49,10 @@ local _iost = {
 }
 
 local function mkiost(fd)
+  checkArg(1, fd, "number")
   return setmetatable({fd=fd}, {__index=_iost})
 end
+lib._mkiost = mkiost
 
 lib.stdin = mkiost(0)
 lib.stdout = mkiost(1)

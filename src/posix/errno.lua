@@ -24,7 +24,7 @@ local map = {
   [95]  = "ENOTSUP",
 }
 
-function lib.err(id)
+function lib.errno(id)
   checkArg(1, id, "number", "string")
   if type(id) == "string" then return id end
   return lang.fetch("errors", map[id] or "EUNKNOWN")

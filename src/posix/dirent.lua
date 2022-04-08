@@ -1,7 +1,7 @@
 -- posix.dirent compatibility
 
 local sys = require("syscalls")
-local errno = require("errors").err
+local errno = require("posix.errno").errno
 
 local lib = {}
 
