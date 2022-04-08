@@ -18,6 +18,9 @@ function lib.getopt(_opts, ...)
           if _opts.options[arg] then
             if (not _args[i+1]) then
               io.stderr:write("option '", arg, "' requires an argument\n")
+              if opts.help_message then
+                io.stderr:write(opts.help_message, "\n")
+              end
               os.exit(1)
             end
             opts[arg] = _args[i+1]
@@ -27,6 +30,9 @@ function lib.getopt(_opts, ...)
           end
         elseif _opts.exit_on_bad_opt then
           io.stderr:write("unrecognized option '", arg, "'\n")
+          if opts.help_message then
+            io.stderr:write(opts.help_message, "\n")
+          end
           os.exit(1)
         end
       else
@@ -36,6 +42,9 @@ function lib.getopt(_opts, ...)
           if #arg == 1 then
             if not _args[i+1] then
               io.stderr:write("option '", arg, "' requires an argument\n")
+              if opts.help_message then
+                io.stderr:write(opts.help_message, "\n")
+              end
               os.exit(1)
             end
             opts[a] = _args[i+1]
@@ -48,11 +57,17 @@ function lib.getopt(_opts, ...)
             if _opts.options[c] == nil then
               if _opts.exit_on_bad_opt then
                 io.stderr:write("unreciognized option '", arg, "'\n")
+                if opts.help_message then
+                  io.stderr:write(opts.help_message, "\n")
+                end
                 os.exit(1)
               end
             elseif _opts.options[c] then
               if not _args[i+1] then
                 io.stderr:write("option '", arg, "' requires an argument\n")
+                if opts.help_message then
+                  io.stderr:write(opts.help_message, "\n")
+                end
                 os.exit(1)
               end
               opts[c] = true
