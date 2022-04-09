@@ -144,3 +144,4 @@ end
 
 -- Load io here too
 _G.io = require("io")
+dofile("/lib/lua/os.lua")
