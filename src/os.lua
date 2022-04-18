@@ -9,3 +9,5 @@ end
 function os.setenv(k, v)
   sys.environ()[k] = v
 end
+
+os.exit = sys.exit
