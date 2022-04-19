@@ -23,8 +23,8 @@ function lib.getopt(_opts, _args)
             if (not _args[i+1]) then
               io.stderr:write("option '", arg, "' requires an argument\n")
 
-              if opts.help_message then
-                io.stderr:write(opts.help_message, "\n")
+              if _opts.help_message then
+                io.stderr:write(_opts.help_message)
               end
 
               os.exit(1)
@@ -42,8 +42,8 @@ function lib.getopt(_opts, _args)
         elseif _opts.exit_on_bad_opt then
           io.stderr:write("unrecognized option '", arg, "'\n")
 
-          if opts.help_message then
-            io.stderr:write(opts.help_message, "\n")
+          if _opts.help_message then
+            io.stderr:write(_opts.help_message)
           end
 
           os.exit(1)
@@ -59,8 +59,8 @@ function lib.getopt(_opts, _args)
             if not _args[i+1] then
               io.stderr:write("option '", arg, "' requires an argument\n")
 
-              if opts.help_message then
-                io.stderr:write(opts.help_message, "\n")
+              if _opts.help_message then
+                io.stderr:write(_opts.help_message)
               end
 
               os.exit(1)
@@ -78,10 +78,10 @@ function lib.getopt(_opts, _args)
           for c in arg:gmatch(".") do
             if _opts.options[c] == nil then
               if _opts.exit_on_bad_opt then
-                io.stderr:write("unreciognized option '", arg, "'\n")
+                io.stderr:write("unrecognized option '", arg, "'\n")
 
-                if opts.help_message then
-                  io.stderr:write(opts.help_message, "\n")
+                if _opts.help_message then
+                  io.stderr:write(_opts.help_message)
                 end
 
                 os.exit(1)
@@ -91,8 +91,8 @@ function lib.getopt(_opts, _args)
               if not _args[i+1] then
                 io.stderr:write("option '", arg, "' requires an argument\n")
 
-                if opts.help_message then
-                  io.stderr:write(opts.help_message, "\n")
+                if _opts.help_message then
+                  io.stderr:write(_opts.help_message)
                 end
 
                 os.exit(1)

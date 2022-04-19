@@ -24,6 +24,8 @@ local map = {
   [95]  = "ENOTSUP",
 }
 
+for k, v in pairs(map) do lib[v] = k end
+
 function lib.errno(id)
   checkArg(1, id, "number", "string")
   if type(id) == "string" then return id end
