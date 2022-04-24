@@ -3,7 +3,7 @@
 local lib = {}
 
 local function unpackResult(result)
-  if not result[1] then
+  if not result[1] and result[2] then
     if type(result[2]) == "string" then
       error(result[2], 0)
     end
