@@ -25,6 +25,7 @@ local reverse = {
 }
 
 local lib = {}
+
 local errno = require("posix.errno")
 
 function lib.strtobmp(permstr)
@@ -62,7 +63,7 @@ function lib.bmptostr(bitmap)
   return ret
 end
 
-function lib.has_permission(ogo, mode, perm)
+function lib.has_permission(mode, perm)
   checkArg(1, mode, "number")
   checkArg(2, perm, "string")
 
