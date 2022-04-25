@@ -113,6 +113,8 @@ function _G.loadfile(path, mode, env)
   local data = syscall("read", fd, "a")
   syscall("close", fd)
 
+  if data:sub(1,2) == "#!" then data = data:gsub("^(.-)\n", "") end
+
   return load(data, "="..path, mode, env or _G)
 end
 

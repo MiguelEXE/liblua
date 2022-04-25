@@ -29,7 +29,7 @@ for k, v in pairs(map) do lib[v] = k end
 function lib.errno(id)
   checkArg(1, id, "number", "string")
   if type(id) == "string" then return id end
-  return lang.fetch("errors", map[id] or "EUNKNOWN")
+  return lang.fetch(map[id] or "EUNKNOWN")
 end
 
 return lib

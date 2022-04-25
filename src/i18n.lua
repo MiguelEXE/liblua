@@ -3,67 +3,58 @@
 -- TODO: needs a bunch of work
 
 local sys = require("syscalls")
-local stdio = require("stdio")
 
 local lib = {}
 
 local mapcache = {}
 
--- find a locale e.g. `/etc/lang/en_US-errors.lua`
-local function findmap(mapid, lang)
-  local path = sys.getenv("LC_PATH") or
-    "/usr/share/lang/#-?.lua;/etc/lang/#-?.lua"
-  for search in path:gmatch("[^;]+") do
-    search = search:gsub("#", lang):gsub("%?", mapid)
-    if sys.stat(search) then
-      return search
-    end
-  end
-  return nil, lang.."-"..mapid..": language file not found"
+-- find a locale e.g. `/etc/lang/en_US.lua`
+local function findmap(lang)
+  return package.searchpath(lang, os.getenv("LC_PATH") or
+    "/usr/share/lang/?.lua;/etc/lang/?.lua", ".", "/")
 end
 
-local function loadmap(id)
-  local lang = sys.getenv("LC_LOCALE") or "en_US"
-  local fullid = lang .. "-" .. id
+local function loadmap()
+  local lang = os.getenv("LC_LOCALE") or "en_US"
 
-  if mapcache[fullid] then return mapcache[fullid] end
+  if mapcache[lang] then return mapcache[lang] end
 
-  local path, err = findmap(id, lang)
+  local path, err = findmap(lang)
   if not path then
-    stdio.fprintf(stdio.stderr, "%s\n", err)
+    io.stderr:write(err, "\n")
     return nil, err
   end
 
   local fd
-  fd, err = sys.open(path, "r")
+  fd, err = io.open(path, "r")
   if not fd then
-    stdio.fprintf(stdio.stderr, "%s: errno %d\n", err)
+    io.stderr:write(("%s: errno %d\n"):format(path, err))
     return nil, err
   end
 
-  local data = sys.read(fd, "a")
-  sys.close(fd)
+  local data = fd:read("a")
+  fd:close()
 
   local call
   call, err = load("return " .. data, "="..path, "t", {})
   if not call then
-    stdio.fprintf(stdio.stderr, "%s\n", err)
+    io.stderr:write(err, "\n")
     return nil, err
   end
 
   local suc, ret = pcall(call)
   if not suc then
-    stdio.fprintf(stdio.stderr, "%s\n", ret)
+    io.stderr:write(ret, "\n")
     return nil, ret
   end
 
-  mapcache[fullid] = ret
+  mapcache[lang] = ret
 
   return ret
 end
 
-function lib.fetch(map, key)
-  local lmap = loadmap(map)
+function lib.fetch(key)
+  local lmap = loadmap()
   return lmap[key]
 end
 

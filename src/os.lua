@@ -6,8 +6,6 @@ function os.getenv(k)
   return sys.environ()[k]
 end
 
-function os.setenv(k, v)
-  sys.environ()[k] = v
+function os.exit(n)
+  sys.exit(n or 0)
 end
-
-os.exit = sys.exit
