@@ -102,12 +102,8 @@ function lib.exec(path, argt)
   return nil, errno.errno(err), err
 end
 
-function lib.execp(path, argt)
-  checkArg(1, path, "string")
-  checkArg(2, argt, "table")
-
+local function searchpath(path, argt)
   local _path = os.getenv("PATH") or "/bin:/usr/bin"
-
   for entry in _path:gmatch("[^:]+") do
     local search = entry .. "/" .. path
     local searchwe = search .. ".lua"
@@ -115,17 +111,39 @@ function lib.execp(path, argt)
     local statx, err = sys.stat(search)
     if statx then
       argt[0] = argt[0] or path
-      return lib.exec(search, argt)
+      return search, argt
     end
 
     local statxwe, errwe = sys.stat(searchwe)
     if statxwe then
       argt[0] = argt[0] or path
-      return lib.exec(searchwe, argt)
+      return searchwe, argt
     end
   end
 
   return nil, errno.errno(errno.ENOENT), errno.ENOENT
+end
+
+function lib.execp(path, argt)
+  checkArg(1, path, "string")
+  checkArg(2, argt, "table")
+
+  local _path, _argt, enoe = searchpath(path, argt)
+  if not _path then return _path, _argt, enoe end
+  return lib.exec(_path, _argt)
+end
+
+-- extension: execpe
+function lib.execpe(path, argt, env)
+  checkArg(1, path, "string")
+  checkArg(2, argt, "table")
+  checkArg(3, env, "table")
+
+  local _path, _argt, enoe = searchpath(path, argt)
+  if not _path then return _path, _argt, enoe end
+
+  local ok, err = sys.execve(_path, _argt, env)
+  if not ok then return nil, errno.errno(err), err end
 end
 
 -- no unistd.fdatasync
