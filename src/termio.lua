@@ -62,8 +62,17 @@ local substitutions = {
   ["6"] = "pageDown"
 }
 
+-- lua 5.2 support
+local function strunpack(str)
+  local result = 0
+  for c in str:reverse():gmatch(".") do
+    result = bit32.lshift(result, 8) + c:byte()
+  end
+  return result
+end
+
 local function getChar(char)
-  local byte = string.unpack("<I"..#char, char)
+  local byte = strunpack(char) --string.unpack("<I"..#char, char)
   if byte + 96 > 255 then
     return utf8.char(byte)
   end

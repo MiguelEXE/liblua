@@ -1,6 +1,8 @@
 -- posix.unistd
 
 local sys = require("syscalls")
+local pwd = require("posix.pwd")
+local grp = require("posix.grp")
 local stat = require("posix.sys.stat")
 local errno = require("posix.errno")
 local permissions = require("permissions")
@@ -56,11 +58,18 @@ function lib.chdir(path)
   return 0
 end
 
--- TODO: passwdb lookups for string user/group IDs
 function lib.chown(path, uid, gid)
   checkArg(1, path, "string")
-  checkArg(2, uid, "number")
-  checkArg(3, uid, "number")
+  checkArg(2, uid, "number", "string")
+  checkArg(3, gid, "number", "string")
+
+  if type(uid) == "string" then
+    uid = assert(pwd.getpwnam(uid)).pw_uid
+  end
+
+  if type(gid) == "string" then
+    gid = assert(grp.getgrnam(gid)).gr_gid
+  end
 
   local ok, err = sys.chown(path, uid, gid)
   if not ok then return nil, errno.errno(err), err end
@@ -103,6 +112,11 @@ function lib.exec(path, argt)
 end
 
 local function searchpath(path, argt)
+  if path:find("/") then
+    local statx = sys.stat(path)
+    if statx then argt[0] = path return path, argt end
+  end
+
   local _path = os.getenv("PATH") or "/bin:/usr/bin"
   for entry in _path:gmatch("[^:]+") do
     local search = entry .. "/" .. path
