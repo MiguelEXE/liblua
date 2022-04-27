@@ -240,7 +240,7 @@ function lib.rmdir(path)
   if not statx then return nil, errno.errno(err), err end
   if stat.S_ISDIR(statx.mode) == 0 then return nil, k.errno.ENOTDIR end
 
-  local fd, _err = sys.opendir(statx)
+  local fd, _err = sys.opendir(path)
   if not fd then return nil, errno.errno(_err), _err end
   local ent = sys.readdir(fd)
   sys.close(fd)
