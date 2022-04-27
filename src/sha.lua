@@ -9,7 +9,7 @@
 -- Trimmed to ~1550 lines (originally ~5670) for ULOS 2 by Ocawesome101:
 --    Removed HMAC/BLAKE2b, a couple huge comments, and LuaJIT support.
 
-local print_debug_messages = true  -- set to true to view some messages about your system's abilities and implementation branch chosen for your system
+local print_debug_messages = false -- set to true to view some messages about your system's abilities and implementation branch chosen for your system
 
 local unpack, table_concat, byte, char, string_rep, sub, gsub, gmatch, string_format, floor, ceil, math_min, math_max, tonumber, type =
    table.unpack, table.concat, string.byte, string.char, string.rep, string.sub, string.gsub, string.gmatch, string.format, math.floor, math.ceil, math.min, math.max, tonumber, type
