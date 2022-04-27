@@ -273,7 +273,13 @@ function lib.setpid(what, id, gid)
 end
 
 -- no unistd.sleep right now
-function lib.sleep()
+function lib.sleep(n)
+  local uptime = sys.uptime()
+  local max = uptime + n
+  repeat
+    coroutine.yield(max - uptime)
+    uptime = sys.uptime()
+  until uptime >= max
 end
 
 -- no unistd.sync

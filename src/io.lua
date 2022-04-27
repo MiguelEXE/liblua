@@ -12,11 +12,16 @@ local lib = {}
 local _iost = {
   read = function(self, ...)
     if self.closed then return nil, get_err(errno.EBADF) end
+
+    local args = table.pack(...)
+    if args.n == 0 then args[1] = "l"; args.n = 1 end
+
     local results = {}
-    for i, format in ipairs(table.pack(...)) do
+    for i, format in ipairs(args) do
       results[i] = sys.read(self.fd, format)
     end
-    return table.unpack(results, 1, select("#", ...))
+
+    return table.unpack(results, 1, args.n)
   end,
 
   lines = function(self, fmt)
