@@ -4,12 +4,14 @@
 -- implementations of this library.
 
 local sys = require("syscalls")
-local get_err = require("posix.errno").errno
+local errno = require("posix.errno")
+local get_err = errno.errno
 
 local lib = {}
 
 local _iost = {
   read = function(self, ...)
+    if self.closed then return nil, get_err(errno.EBADF) end
     local results = {}
     for i, format in ipairs(table.pack(...)) do
       results[i] = sys.read(self.fd, format)
@@ -18,12 +20,14 @@ local _iost = {
   end,
 
   lines = function(self, fmt)
+    if self.closed then return nil, get_err(errno.EBADF) end
     return function()
       return self:read(fmt or "l")
     end
   end,
 
   write = function(self, ...)
+    if self.closed then return nil, get_err(errno.EBADF) end
     local to_write = table.pack(...)
     for _, data in ipairs(to_write) do
       sys.write(self.fd, data)
@@ -32,19 +36,26 @@ local _iost = {
   end,
 
   seek = function(self, whence, offset)
+    if self.closed then return nil, get_err(errno.EBADF) end
     return sys.seek(self.fd, whence, offset)
   end,
 
   flush = function(self)
+    if self.closed then return nil, get_err(errno.EBADF) end
     return sys.flush(self.fd)
   end,
 
   close = function(self)
+    if self.closed then return nil, get_err(errno.EBADF) end
+    self.closed = true
     return sys.close(self.fd)
   end,
 
   setvbuf = function(self, mode)
-    return sys.ioctl(self.fd, "setvbuf", mode)
+    if self.closed then return nil, get_err(errno.EBADF) end
+    local ok, err = sys.ioctl(self.fd, "setvbuf", mode)
+    if not ok then return nil, get_err(err) end
+    return ok
   end,
 }
 
