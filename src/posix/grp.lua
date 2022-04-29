@@ -9,7 +9,8 @@ local lib = {}
 local FILE = "/etc/group"
 
 local field_names = {
-  "gr_name", "gr_gid", "gr_mem"
+  -- extension: return gr_passwd if present
+  "gr_name", "gr_passwd", "gr_gid", "gr_mem"
 }
 
 local function to_fields(line)
