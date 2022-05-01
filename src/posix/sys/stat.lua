@@ -80,6 +80,8 @@ function lib.lstat(path)
   }
 end
 
+lib.stat = lib.lstat
+
 function lib.mkdir(path, mode)
   checkArg(1, path, "string")
   checkArg(2, mode, "number")
