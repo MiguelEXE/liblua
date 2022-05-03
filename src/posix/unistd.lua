@@ -166,7 +166,12 @@ function lib.fork()
   return nil, errno.errno(errno.ENOSYS), errno.ENOSYS
 end
 
--- no unistd.fsync
+function lib.fsync(fd)
+  checkArg(1, fd, "number")
+  local ok, err = sys.flush(fd)
+  if not ok then return nil, errno.errno(err), err end
+  return 0
+end
 -- no unistd.ftruncate
 
 lib.getcwd = sys.getcwd
