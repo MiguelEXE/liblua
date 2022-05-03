@@ -232,8 +232,8 @@ function lib.read(fd, count)
   checkArg(2, count, "number")
 
   local data, err = sys.read(fd, count)
-  if not data then return nil, errno.errno(err), err end
-  return data
+  if not data and err then return nil, errno.errno(err), err end
+  return data or ""
 end
 
 -- no unistd.readlink
