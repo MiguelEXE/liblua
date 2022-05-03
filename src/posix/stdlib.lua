@@ -1,6 +1,7 @@
 -- posix.stdlib
 
 local sys = require("syscalls")
+local errno = require("posix.errno")
 
 local lib = {}
 
@@ -25,7 +26,10 @@ end
 function lib.realpath(path)
   checkArg(1, path, "string")
   if path:sub(1,1) ~= "/" then path = sys.getcwd() .. "/" .. path end
-  return "/" .. table.concat(segments(path), "/")
+  path = "/" .. table.concat(segments(path), "/")
+  local ok, _errno = sys.stat(path)
+  if not ok then return nil, errno.errno(_errno), _errno end
+  return path
 end
 
 function lib.setenv(name, value, overwrite)

@@ -225,7 +225,11 @@ end
 -- no unistd.nice
 -- no unistd.pathconf
 
-lib.pipe = sys.pipe
+-- cynosure returns these backwards -_-
+function lib.pipe()
+  local a, b = sys.pipe()
+  return b, a
+end
 
 function lib.read(fd, count)
   checkArg(1, fd, "number")
