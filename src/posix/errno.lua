@@ -21,6 +21,7 @@ local map = {
   [25]  = "ENOTTY",
   [49]  = "EUNATCH",
   [83]  = "ELIBEXEC",
+  [92]  = "ENOPROTOOPT",
   [95]  = "ENOTSUP",
 }
 
