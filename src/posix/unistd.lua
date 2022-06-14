@@ -194,6 +194,11 @@ lib.getpid = sys.getpid
 lib.getppid = sys.getppid
 lib.getuid = sys.getuid
 
+function lib.getlogin()
+  return sys.ioctl(sys.isatty(0) and 0 or
+    sys.isatty(1) and 1 or sys.isatty(2) and 2, "getlogin")
+end
+
 function lib.isatty(fd)
   checkArg(1, fd, "number")
 
