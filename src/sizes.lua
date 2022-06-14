@@ -1,5 +1,4 @@
---- Size utilities
--- This module provides a few utility functions for formatting of data sizes i.e. file sizes.
+--- Some utility functions for formatting of data sizes i.e. file sizes.
 -- @module sizes
 -- @alias lib
 

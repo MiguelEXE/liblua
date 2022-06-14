@@ -1,7 +1,8 @@
---- Table copying
--- This module contains a table copier function.
+--- A table copier.
+-- This module provides one function for obtaining a complete copy of a table.
 -- @module copier
 -- @alias lib
+
 
 local lib = {}
 local checkArg = require("checkArg")

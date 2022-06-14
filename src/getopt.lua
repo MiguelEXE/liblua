@@ -1,5 +1,5 @@
---- Argument parsing
--- This module is loosely inspired by GNU getopt;  its interface is tailored to Lua rather than C, and it is less obtuse.  The code is taken from ULOS 1 and has been modified very slightly to work with ULOS 2.
+--- Argument parsing.
+-- Provides an argument parser loosely inspired by GNU getopt;  its interface is tailored to Lua rather than C, and it is thereby somewhat less obtuse.  The code is taken from ULOS 1 and has been modified very slightly to work with ULOS 2.
 -- @module getopt
 -- @alias lib
 

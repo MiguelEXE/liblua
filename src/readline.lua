@@ -1,5 +1,5 @@
---- Readline implementation
--- This library provides a fairly complete readline function.  It supports line editing, history, and obfuscation.
+--- A Readline implementation.
+-- Provides a fairly complete readline function.  It supports line editing, history, and obfuscation.
 -- Loading this with `require` will provide only a single function, @{readline}.
 -- @module readline
 
@@ -18,7 +18,7 @@ local rlid = 0
 
 --- Read a line of input.
 -- @function readline
--- @tparam @{rlopts} opts Readline options
+-- @tparam[opt] @{rlopts} opts Readline options
 -- @treturn string The input that was read
 local function readline(opts)
   checkArg(1, opts, "table", "nil")

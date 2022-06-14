@@ -1,5 +1,5 @@
---- Terminal I/O
--- This module provides convenient wrappers over VT100 functionality.  It supports use of handlers to allow functionality across a wide variety of terminal emulators.
+--- Provides convenience wrappers over VT100 functionality.
+-- This module supports use of handlers to allow functionality across a wide variety of terminal emulators.
 -- @module termio
 -- @alias lib
 

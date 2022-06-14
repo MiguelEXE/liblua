@@ -1,5 +1,5 @@
---- Localization
--- This library manages system localization.  Locale maps are loaded from `/etc` and must be Lua tables.  See the included `en_US` map for details.
+--- Manages system localization.
+-- Locale maps are loaded from `/etc` and must be Lua tables.  See the included `en_US` map for details.
 -- @module i18n
 -- @alias lib
 

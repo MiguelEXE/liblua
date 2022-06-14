@@ -1,5 +1,4 @@
---- Permissions
--- This module provides utilities for working with file permissions.
+--- Provides utilities for working with file permissions.
 -- @module permissions
 -- @alias lib
 
