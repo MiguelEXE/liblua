@@ -10,6 +10,7 @@ local map = {
   [2]   = "ENOENT",
   [8]   = "ENOEXEC",
   [9]   = "EBADF",
+  [10]  = "ECHILD",
   [13]  = "EACCES",
   [16]  = "EBUSY",
   [17]  = "EEXIST",

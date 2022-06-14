@@ -3,6 +3,7 @@
   ENOENT      = "No such file or directory",
   ENOEXEC     = "Executable format error",
   EBADF       = "Bad file descriptor",
+  ECHILD      = "Not a child process",
   EACCES      = "Permission denied",
   EBUSY       = "Device or resource busy",
   EEXIST      = "File exists",
