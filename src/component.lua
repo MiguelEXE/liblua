@@ -48,4 +48,7 @@ function component.list(ctype, exact)
   return ret
 end
 
+function component.proxy()
+end
+
 return component
