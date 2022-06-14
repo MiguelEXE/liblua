@@ -15,7 +15,7 @@
 
 
 ------------------------------------------------------------
--- sha3 / keccak
+-- sha3 / keccak implementation from https://github.com/philanc/plc.
 
 local char	= string.char
 local concat	= table.concat
