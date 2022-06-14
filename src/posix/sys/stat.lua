@@ -48,7 +48,7 @@ local inverse = {
 for k, v in pairs(inverse) do
   lib[k] = function(num)
     checkArg(1, num, "number")
-    return bit32.band(num, lib.S_IFMT) == v and 1 or 0
+    return (num & lib.S_IFMT) == v and 1 or 0
   end
 end
 

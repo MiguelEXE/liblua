@@ -92,7 +92,7 @@ function package.searchpath(name, path, sep, rep)
   for search in path:gmatch("[^"..package.config:sub(3,3).."]+") do
     search = search:gsub("%"..package.config:sub(5,5), name)
     local stat = syscall("stat", search)
-    if stat and bit32.band(stat.mode, 0x4000) == 0 then
+    if stat and (stat.mode & 0x4000) == 0 then
       return search
     else
       if #emsg > 0 then emsg = emsg .. "\n  " end
