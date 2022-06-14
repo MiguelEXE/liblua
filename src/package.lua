@@ -11,7 +11,9 @@ package.cpath = "/lib/?.csl;/usr/lib/?.csl;./?.csl"
 package.path = "/lib/lua/?.lua;/lib/lua/?/init.lua;" ..
   "/usr/lib/lua/?.lua;/usr/lib/lua/?/init.lua"
 
-local loaded = {}
+local loaded = {checkArg = checkArg}
+_G.checkArg = nil
+local checkArg = loaded.checkArg
 package.loaded = setmetatable({}, {__index = function(_, k)
   if _G[k] then
     return _G[k]

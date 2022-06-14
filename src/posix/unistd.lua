@@ -5,6 +5,7 @@ local pwd = require("posix.pwd")
 local grp = require("posix.grp")
 local stat = require("posix.sys.stat")
 local errno = require("posix.errno")
+local checkArg = require("checkArg")
 local permissions = require("permissions")
 
 local lib = {}

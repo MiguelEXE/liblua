@@ -1,6 +1,7 @@
 -- readline library --
 
 local termio = require("termio")
+local checkArg = require("checkArg")
 
 local rlid = 0
 

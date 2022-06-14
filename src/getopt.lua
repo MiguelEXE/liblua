@@ -2,6 +2,8 @@
 
 local lib = {}
 
+local checkArg = require("checkArg")
+
 function lib.getopt(_opts, _args)
   checkArg(1, _opts, "table")
   checkArg(2, _args, "table")

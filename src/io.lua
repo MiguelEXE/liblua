@@ -5,6 +5,7 @@
 
 local sys = require("syscalls")
 local errno = require("posix.errno")
+local checkArg = require("checkArg")
 local get_err = errno.errno
 
 local lib = {}

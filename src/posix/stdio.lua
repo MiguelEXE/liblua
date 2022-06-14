@@ -1,6 +1,7 @@
 -- posix.stdio
 
 local lib = {}
+local checkArg = require("checkArg")
 
 lib.fdopen = io._mkiost
 

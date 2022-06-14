@@ -2,7 +2,7 @@
 -- very similar to posix.pwd
 
 local errno = require("posix.errno")
-local pwd = require("posix.pwd")
+local checkArg = require("checkArg")
 
 local lib = {}
 

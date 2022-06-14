@@ -1,7 +1,8 @@
 -- posix.sys.stat --
 
-local errno = require("posix.errno")
 local sys = require("syscalls")
+local errno = require("posix.errno")
+local checkArg = require("checkArg")
 
 -- constants, as per LuaPosix docs
 local lib = {

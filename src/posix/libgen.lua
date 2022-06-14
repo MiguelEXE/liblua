@@ -1,5 +1,7 @@
 -- posix.libgen implementation
 
+local checkArg = require("checkArg")
+
 local function segments(path)
   local dir, base = path:match("^(.-)/?([^/]+)/?$")
   dir = (dir and #dir > 0 and dir) or "."
@@ -10,10 +12,12 @@ end
 local lib = {}
 
 function lib.basename(path)
+  checkArg(1, path, "string")
   return select(2, segments(path))
 end
 
 function lib.dirname(path)
+  checkArg(1, path, "string")
   return (segments(path))
 end
 

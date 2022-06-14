@@ -27,6 +27,7 @@ local reverse = {
 local lib = {}
 
 local errno = require("posix.errno")
+local checkArg = require("checkArg")
 
 function lib.strtobmp(permstr)
   checkArg(1, permstr, "string")

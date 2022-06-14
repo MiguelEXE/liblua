@@ -4,6 +4,7 @@ local lib = {}
 
 local wait = require("syscalls").wait
 local errno = require("posix.errno")
+local checkArg = require("checkArg")
 
 function lib.wait(pid, options)
   checkArg(1, pid, "number")

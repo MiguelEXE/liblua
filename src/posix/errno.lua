@@ -1,7 +1,7 @@
 -- convert an error message to a name --
 
--- link against i18n
 local lang = require("i18n")
+local checkArg = require("checkArg")
 
 local lib = {}
 
