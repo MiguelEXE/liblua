@@ -28,12 +28,14 @@ function component.list(ctype, exact)
   checkArg(2, exact, "boolean", "nil")
   local ret = {}
 
+  map = {}
+
   for comptype in files(components) do
     if is(comptype, ctype, exact) then
       for comp in files(components..comptype) do
         local fd = open(components..comptype.."/"..comp, "r")
         local address = ioctl(fd, "address")
-        map[address] = comp
+        map[address] = {id=comp, type=comptype, slot=ioctl(fd, "slot")}
         ret[address] = comptype
       end
     end
@@ -48,7 +50,113 @@ function component.list(ctype, exact)
   return ret
 end
 
-function component.proxy()
+local function get(address)
+  if not map[address] then
+    component.list()
+  end
+
+  if not map[address] then
+    return nil, "no such component"
+  end
+
+  return map[address]
+end
+
+function component.proxy(address)
+  checkArg(1, address, "string")
+
+
+  local entry, err = get(address)
+  if not entry then
+    return nil, err
+  end
+
+  local fd = open(components..entry.type.."/"..entry.id, "r")
+  local methods = ioctl(fd, "methods")
+
+  local proxy = {slot = entry.slot, type = entry.type, address = address}
+  for method, direct in pairs(methods) do
+    if direct then
+      local doc = ioctl(fd, "doc", method)
+      proxy[method] = setmetatable({}, {__call = function(_, ...)
+        return ioctl(fd, "invoke", method, ...)
+      end, __tostring = function() return doc end})
+    end
+  end
+
+  return proxy
+end
+
+local function invoke(address, ...)
+  local entry, err = get(address)
+  if not entry then
+    return nil, err
+  end
+
+  local fd = open(components..entry.type.."/"..entry.id, "r")
+  local result = table.pack(ioctl(fd, "invoke", ...))
+  close(fd)
+  return table.unpack(result, 1, result.n)
+end
+
+local function field(address, key)
+  local entry, err = get(address)
+  if not entry then
+    return nil, err
+  end
+
+  return entry[key]
+end
+
+function component.invoke(address, method, ...)
+  checkArg(1, address, "string")
+  checkArg(2, method, "string")
+
+  return invoke(address, method, ...)
+end
+
+function component.doc(address, method)
+  checkArg(1, address, "string")
+  checkArg(2, method, "string")
+
+  return invoke(address, "doc", method)
+end
+
+function component.methods(address)
+  checkArg(1, address, "string")
+
+  return invoke(address, "methods")
+end
+
+function component.type(address)
+  checkArg(1, address, "string")
+
+  return field(address, "type")
+end
+
+function component.slot(address)
+  checkArg(1, address, "string")
+
+  return field(address, "slot")
+end
+
+function component.fields(address)
+  checkArg(1, address, "string")
+
+  return invoke(address, "fields")
+end
+
+function component.get(addr, ctype)
+  checkArg(1, addr, "string")
+  checkArg(2, ctype, "string", "nil")
+
+  for address in component.list(ctype, true) do
+    if address:sub(1, #addr) == addr then
+      return address
+    end
+  end
+
+  return nil, "no such component"
 end
 
 return component

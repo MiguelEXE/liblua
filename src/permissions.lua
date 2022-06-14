@@ -1,4 +1,7 @@
--- permissions utilities
+--- Permissions
+-- This module provides utilities for working with file permissions.
+-- @module permissions
+-- @alias lib
 
 local order = {
   0x001,
@@ -29,6 +32,11 @@ local lib = {}
 local errno = require("posix.errno")
 local checkArg = require("checkArg")
 
+--- Convert a string representation to a binary one.
+-- Takes a string in a form similar to that output by `ls`, and returns a number with the appropriate bits set.  The string must be exactly nine characters long and in the format `rwxrwxrwx`, where any `r`, `w`, or `x` may be replaced by a `-`.
+-- For example, `rwxrw-r--`, `r-xr-xr-x`, and `rw--wx--w-` are all valid, but `rwrwrw` is not.
+-- @tparam string permstr The string to process
+-- @treturn number A numerical representation of the input string
 function lib.strtobmp(permstr)
   checkArg(1, permstr, "string")
 
@@ -41,20 +49,24 @@ function lib.strtobmp(permstr)
   for i=#order, 1, -1 do
     local index = #order - i + 1
     if permstr:sub(index, index) ~= "-" then
-      bitmap = bit32.bor(bitmap, order[i])
+      bitmap = bitmap | order[i]
     end
   end
 
   return bitmap
 end
 
+--- Convert a bitmap representation to a string.
+-- The bitmap must be in the same format as a POSIX file mode - the same as that returned by @{strtobmp}.
+-- @tparam number bitmap The permissions to process
+-- @treturn string A string representation, in the same form as passed to @{strtobmp}.
 function lib.bmptostr(bitmap)
   checkArg(1, bitmap, "number")
 
   local ret = ""
 
   for i=#order, 1, -1 do
-    if bit32.band(bitmap, order[i]) ~= 0 then
+    if (bitmap | order[i]) ~= 0 then
       ret = ret .. reverse[i]
     else
       ret = ret .. "-"
@@ -64,13 +76,18 @@ function lib.bmptostr(bitmap)
   return ret
 end
 
+--- Check if a permission is set.
+-- Checks if the given permission string, when ANDed with the given `mode`, is exactly returned.  Relatively inflexible.
+-- @tparam number mode The file mode to check against
+-- @tparam string perm The permissions to check
+-- @treturn boolean Whether the given permission is set
 function lib.has_permission(mode, perm)
   checkArg(1, mode, "number")
   checkArg(2, perm, "string")
 
   local val_check = lib.strtobmp(perm)
 
-  return bit32.band(mode, val_check) == val_check
+  return (mode & val_check) == val_check
 end
 
 return lib

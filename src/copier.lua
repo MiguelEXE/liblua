@@ -1,8 +1,11 @@
--- table copier
+--- Table copying
+-- This module contains a table copier function.
+-- @module copier
+-- @alias lib
 
 local lib = {}
+local checkArg = require("checkArg")
 
--- from https://lua-users.org/wiki/CopyTable
 local function deepcopy(orig, copies)
   copies = copies or {}
   local orig_type = type(orig)
@@ -28,6 +31,13 @@ local function deepcopy(orig, copies)
   return copy
 end
 
-lib.copy = deepcopy
+--- Create a complete copy of a table.
+-- Also copies metatables.  The implementation is from https://lua-users.org/wiki/CopyTable.
+-- @tparam table tab The table to copy
+-- @treturn table The new table
+function lib.copy(tab)
+  checkArg(1, tab, "table")
+  return deepcopy(tab)
+end
 
 return lib

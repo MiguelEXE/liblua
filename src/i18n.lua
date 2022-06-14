@@ -1,10 +1,10 @@
--- localization! --
-
--- TODO: needs a bunch of work
-
-local sys = require("syscalls")
+--- Localization
+-- This library manages system localization.  Locale maps are loaded from `/etc` and must be Lua tables.  See the included `en_US` map for details.
+-- @module i18n
+-- @alias lib
 
 local lib = {}
+local checkArg = require("checkArg")
 
 local mapcache = {}
 
@@ -53,7 +53,11 @@ local function loadmap()
   return ret
 end
 
+--- Fetch a localized string using a key.
+-- @tparam string key The key to look up
+-- @treturn string|nil The localized string
 function lib.fetch(key)
+  checkArg(1, key, "string")
   local lmap = loadmap()
   return lmap[key]
 end

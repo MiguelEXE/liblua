@@ -1,9 +1,29 @@
--- Argument parser from ULOS 1
+--- Argument parsing
+-- This module is loosely inspired by GNU getopt;  its interface is tailored to Lua rather than C, and it is less obtuse.  The code is taken from ULOS 1 and has been modified very slightly to work with ULOS 2.
+-- @module getopt
+-- @alias lib
 
 local lib = {}
 
 local checkArg = require("checkArg")
 
+------
+-- Options given to @{getopt}
+-- @tfield table options Key-value pairs of all possible options, where the key is the option name and the value is a boolean indicating whether that option takes an argument.  This is the only mandatory field.
+-- @tfield string help_message A help message that is written to the standard error stream when an error condition is reached.
+-- @tfield boolean exit_on_bad_opt Whether it is an error to find an invalid option (one not specified in the `options` table).
+-- @tfield boolean finish_after_arg Whether to stop processing options after any non-option argument is reached.
+-- @tfield boolean can_repeat_opts Whether options may be repeated.
+-- @table options
+
+--- Process program arguments according to the given options.
+-- Takes the given table of @{options}, and processes the given arguments accordingly.
+-- The returned table of options will vary slightly depending whether the `can_repeat_opts` option is set.  If it is set, all values returned in the `opts` table will be tables containing an array of all the values given to that option over one or more occurrences of that option (possibly just one item).  Otherwise, the most recent occurrence of an option takes precedence and all values in `opts` are strings.  Keys in the returned `opts` table are always strings corresponding to the name of the option.
+-- Option names should never begin with a `-` or `--`.
+-- @tparam table _opts The options to use
+-- @tparam table _args The arguments to process
+-- @treturn table The arguments left over (`args`)
+-- @treturn table The provided options (`opts`)
 function lib.getopt(_opts, _args)
   checkArg(1, _opts, "table")
   checkArg(2, _args, "table")

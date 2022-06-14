@@ -1,4 +1,6 @@
--- system call wrappers --
+--- System call wrappers
+-- Contains wrappers for every system call.  See Cynosure 2's system call documentation.
+-- @module syscalls
 
 local lib = {}
 

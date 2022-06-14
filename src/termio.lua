@@ -1,4 +1,7 @@
--- terminal I/O library --
+--- Terminal I/O
+-- This module provides convenient wrappers over VT100 functionality.  It supports use of handlers to allow functionality across a wide variety of terminal emulators.
+-- @module termio
+-- @alias lib
 
 local lib = {}
 
@@ -8,6 +11,9 @@ local function getHandler()
 end
 
 -------------- Cursor manipulation ---------------
+--- Set the cursor position.
+-- @tparam number x Cursor X position
+-- @tparam number y Cursor Y position
 function lib.setCursor(x, y)
   if not getHandler().ttyOut() then
     return
@@ -15,6 +21,10 @@ function lib.setCursor(x, y)
   io.write(string.format("\27[%d;%dH", y, x))
 end
 
+--- Get the current cursor position.
+-- If this cannot be determined, the result will be `1, 1`.
+-- @treturn number Cursor X position
+-- @treturn number Cursor Y position
 function lib.getCursor()
   if not (getHandler().ttyIn() and getHandler().ttyOut()) then
     return 1, 1
@@ -36,6 +46,10 @@ function lib.getCursor()
   return tonumber(x), tonumber(y)
 end
 
+--- Get the size of the terminal.
+-- If this cannot be determined, the result will be `1, 1`.
+-- @treturn number Terminal width
+-- @treturn number Terminal height
 function lib.getTermSize()
   local cx, cy = lib.getCursor()
   lib.setCursor(9999, 9999)
@@ -46,6 +60,8 @@ function lib.getTermSize()
   return w, h
 end
 
+--- Set whether the cursor is visible.
+-- @tparam boolean vis Whether the cursor is visible
 function lib.cursorVisible(vis)
   getHandler().cursorVisible(vis)
 end
@@ -62,23 +78,24 @@ local substitutions = {
   ["6"] = "pageDown"
 }
 
--- lua 5.2 support
-local function strunpack(str)
-  local result = 0
-  for c in str:reverse():gmatch(".") do
-    result = bit32.lshift(result, 8) + c:byte()
-  end
-  return result
-end
-
 local function getChar(char)
-  local byte = strunpack(char) --string.unpack("<I"..#char, char)
+  local byte = string.unpack("<I"..#char, char)
   if byte + 96 > 255 then
     return utf8.char(byte)
   end
   return string.char(96 + byte)
 end
 
+------
+-- Flags returned by @{readKey}.
+-- @tfield boolean ctrl Whether the Control key was pressed
+-- @tfield boolean alt Whether the Alt (Option) key was pressed
+-- @table keyflags
+
+--- Read a keypress from standard input.
+-- This function will read a single keypress (NOT a single character) and return a symbolic name for it.  Characters within the ASCII range are left alone.  Escape sequences representing e.g. arrow keys are recognized and returned as `left`, `right`, `up`, or `down`.  `ctrl-[Key]` sequences are also supported, and returned with the `ctrl` flag set to `true`.
+-- @treturn string The character that was read
+-- @treturn @{keyflags} Additional flags
 function lib.readKey()
   getHandler().setRaw(true)
   local data = io.stdin:read(1)

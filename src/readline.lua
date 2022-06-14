@@ -1,10 +1,25 @@
--- readline library --
+--- Readline implementation
+-- This library provides a fairly complete readline function.  It supports line editing, history, and obfuscation.
+-- Loading this with `require` will provide only a single function, @{readline}.
+-- @module readline
 
 local termio = require("termio")
 local checkArg = require("checkArg")
 
 local rlid = 0
 
+------
+-- Readline options.  All fields in this table are optional.
+-- @tfield string prompt A prompt to display
+-- @tfield table history A table of history
+-- @tfield boolean noexit Do not exit on `^D`
+-- @tfield function exit A function to call instead of `os.exit` when `^D` is pressed, unless `noexit` is set
+-- @table rlopts
+
+--- Read a line of input.
+-- @function readline
+-- @tparam @{rlopts} opts Readline options
+-- @treturn string The input that was read
 local function readline(opts)
   checkArg(1, opts, "table", "nil")
 
