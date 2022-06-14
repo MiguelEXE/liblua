@@ -91,7 +91,7 @@ function lib.update_passwd(passwd)
     return nil, errno.errno(errno.EBUSY), errno.EBUSY
   end
 
-  local entries, added = {}, true
+  local entries, added = {}, false
   for entry in lib.getpwent do
     if entry.pw_uid == passwd.pw_uid then
       entries[#entries+1] = passwd

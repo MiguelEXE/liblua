@@ -34,11 +34,11 @@ function lib.access(path, mode)
   local status = true
   for c in mode:gmatch(".") do
     if c == "r" then
-      if bit32.band(statx.mode, rperm) == 0 then status = false end
+      if (statx.mode & rperm) == 0 then status = false end
     elseif c == "w" then
-      if bit32.band(statx.mode, wperm) == 0 then status = false end
+      if (statx.mode & wperm) == 0 then status = false end
     elseif c == "x" then
-      if bit32.band(statx.mode, xperm) == 0 then status = false end
+      if (statx.mode & xperm) == 0 then status = false end
     elseif c ~= "f" then
       return nil, errno.errno(errno.EINVAL), errno.EINVAL
     end
@@ -85,7 +85,12 @@ function lib.close(fd)
   return 0
 end
 
--- TODO: unistd.crypt
+function lib.crypt(text)
+  checkArg(1, text, "string")
+  return require("sha3").sha256(text):gsub(".", function(c)
+    return ("%02x"):format(c:byte())
+  end)
+end
 
 function lib.dup(fd)
   checkArg(1, fd, "number")
