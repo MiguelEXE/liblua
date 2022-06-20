@@ -5,6 +5,7 @@
   EBADF       = "Bad file descriptor",
   ECHILD      = "Not a child process",
   EACCES      = "Permission denied",
+  ENOTBLK     = "Block device required",
   EBUSY       = "Device or resource busy",
   EEXIST      = "File exists",
   EXDEV       = "Invalid cross-device operation",

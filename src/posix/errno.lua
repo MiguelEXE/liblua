@@ -12,6 +12,7 @@ local map = {
   [9]   = "EBADF",
   [10]  = "ECHILD",
   [13]  = "EACCES",
+  [15]  = "ENOTBLK",
   [16]  = "EBUSY",
   [17]  = "EEXIST",
   [18]  = "EXDEV",

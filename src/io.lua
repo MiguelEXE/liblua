@@ -69,6 +69,7 @@ local function mkiost(fd)
   checkArg(1, fd, "number")
   return setmetatable({fd=fd}, {__index=_iost})
 end
+
 lib._mkiost = mkiost
 
 lib.stdin = mkiost(0)
@@ -125,6 +126,20 @@ function lib.output(file)
     lib.stdout = file
   end
   return lib.stdout
+end
+
+function lib.lines(file, ...)
+  checkArg(1, file, "string", "nil")
+
+  local handle = io.stdin
+  if file then handle = assert(io.open(file, "r")) end
+
+  local mode = table.pack(...)
+  if mode.n == 0 then mode = {"l", n = 1} end
+
+  return function()
+    return handle:read(table.unpack(mode, 1, mode.n))
+  end
 end
 
 function lib.popen(command, mode)

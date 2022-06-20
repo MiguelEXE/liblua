@@ -44,7 +44,8 @@ function component.list(ctype, exact)
   local k
   setmetatable(ret, {__call = function()
     k = next(ret, k)
-    if k then return k, ret[k] end
+    if k then return k, ret[k], string.format("%s%s/%s", components,
+      map[k].type, map[k].id) end
   end})
 
   return ret
