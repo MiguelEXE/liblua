@@ -150,4 +150,47 @@ function lib.getopt(_opts, _args)
   return args, opts
 end
 
+--- Build a set of options and usage information.
+-- For some example usage, see @{getopt.build.lua}.
+-- @tparam table supported The options to assemble; an array of @{Supported}s
+-- @treturn table Options to pass to the `options` field of @{getopt}
+-- @treturn string Usage information, indented by two spaces
+-- @treturn function A wrapper over @{getopt} that condenses all options to their short forms
+function lib.build(supported)
+  checkArg(1, supported, "table")
+
+  local options = {}
+  local usage = {}
+
+  for i=1, #supported, 1 do
+    local opt = supported[i]
+    local use = {}
+    for n=3, #opt, 1 do
+      options[opt[n]] = not not opt[2]
+      use[#use+1] = (#opt[n] == 1 and "-" or "--") .. opt[n]
+    end
+
+    usage[#usage+1] = string.format("%s%s\t%s", table.concat(use, ", "),
+      opt[2] and (" " .. opt[2]) or "", opt[1])
+  end
+
+  return options, "  " .. table.concat(usage, "\n  "), function(opts)
+    for i=1, #supported, 1 do
+      local opt = supported[i]
+      for n=3, #opt, 1 do
+        opts[opt[3]] = opts[opt[n]]
+        if opts[opt[3]] then break end
+      end
+    end
+  end
+end
+
+------
+-- Supported options given to `build`.
+-- @tfield string 1 A short description of the option
+-- @tfield string|boolean 2 The name of the argument the option takes, or `false` if it does not take one
+-- @tfield string 3 The short name of the option
+-- @tfield[opt] string 4 The long name of the option
+-- @table Supported
+
 return lib
