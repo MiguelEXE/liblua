@@ -273,7 +273,7 @@ function lib.setpid(what, id, gid)
   checkArg(2, id, "number")
   checkArg(3, gid, "number", what ~= "p" and "nil")
 
-  if #what > 0 or not what:match("[uUgGsp]") then
+  if #what ~= 1 or not what:match("[uUgGsp]") then
     return nil, errno.errno(errno.EINVAL), errno.EINVAL
   end
 
@@ -281,7 +281,7 @@ function lib.setpid(what, id, gid)
     what == "U" and "eu" or
     what == "G" and "eg" or
     what == "p" and "pg" or
-    what) .. "id"
+    what) .. (what == "p" and "rp" or "id")
 
   local ok, err = sys[fname](id, gid)
   if not ok then return nil, errno.errno(err), err end
