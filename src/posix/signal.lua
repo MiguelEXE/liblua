@@ -52,6 +52,11 @@ function lib.killpg(pgrp, sig)
   return 0
 end
 
+function lib.raise(sig)
+  checkArg(1, sig, "number")
+  return lib.kill(0, sig)
+end
+
 -- TODO: do something with `flags`
 function lib.signal(signum, handler)
   checkArg(1, signum, "number")
