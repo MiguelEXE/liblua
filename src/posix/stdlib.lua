@@ -24,6 +24,8 @@ local function segments(path)
   return segs
 end
 
+lib._segments = segments
+
 function lib.realpath(path)
   checkArg(1, path, "string")
   if path:sub(1,1) ~= "/" then path = sys.getcwd() .. "/" .. path end
