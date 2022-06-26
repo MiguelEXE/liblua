@@ -3,6 +3,9 @@
 -- Loading this with `require` will provide only a single function, @{readline}.
 -- @module readline
 
+local gen = require("posix.libgen")
+local dent = require("posix.dirent")
+local stat = require("posix.sys.stat")
 local termio = require("termio")
 local checkArg = require("checkArg")
 
@@ -14,7 +17,55 @@ local rlid = 0
 -- @tfield table history A table of history
 -- @tfield boolean noexit Do not exit on `^D`
 -- @tfield function exit A function to call instead of `os.exit` when `^D` is pressed, unless `noexit` is set
+-- @tfield function complete A function that takes a buffer and cursor index, and returns a table of valid completions.  A single completion result will be inserted into the buffer;  otherwise multiple results will be tabulated.
 -- @table rlopts
+
+local empty = {}
+
+local function defaultComplete(buffer, cpos)
+  if cpos ~= #buffer then return end
+  -- find the last space
+  local idx = #buffer - (buffer:reverse():find(" ") or (#buffer - 1))
+  local path = buffer:sub(idx+2)
+  local base = gen.basename(path)
+  local dir = gen.dirname(path)
+  if path:sub(-1) == "/" then dir = path; base = "" end
+  local hidden = base:sub(1,1) == "."
+  local results = {}
+  if stat.stat(dir) then
+    for file in dent.files(dir) do
+      if (file:sub(1,1) ~= "." or hidden) and file:sub(1, #base) == base then
+        local full = dir.."/"..file
+        local sx = stat.lstat(full)
+        if stat.S_ISDIR(sx.st_mode) ~= 0 then
+          file = file .. "/"
+        end
+        results[#results+1] = file:sub(#base+1)
+      end
+    end
+  end
+  return results
+end
+
+local function tabulate(text, w)
+  local lines = {""}
+  local max = 0
+  table.sort(text)
+  for i=1, #text, 1 do max = math.max(max, #text[i]) end
+  for i=1, #text, 1 do
+    if #lines[#lines] + max > w then
+      lines[#lines+1] = text[i] .. (" "):rep(max - #text[i])
+    else
+      lines[#lines] = lines[#lines] .. text[i]
+    end
+    if #lines[#lines] + 2 > w then
+      lines[#lines+1] = ""
+    else
+      lines[#lines] = lines[#lines] .. "  "
+    end
+  end
+  return lines
+end
 
 --- Read a line of input.
 -- @function readline
@@ -35,7 +86,9 @@ local function readline(opts)
   local buffer = ""
   local cpos = 0
 
-  local _, h = termio.getTermSize()
+  local complete = opts.complete or defaultComplete
+
+  local w, h = termio.getTermSize()
 
   while true do
     local key, flags = termio.readKey()
@@ -112,7 +165,8 @@ local function readline(opts)
     elseif flags.ctrl then
       if key == "m" then -- enter
         if cpos > 0 then io.write(string.format("\27[%dC", cpos)) end
-        io.write("\n")
+        io.write("\n\27[J")
+        io.flush()
         break
       elseif key == "a" and cpos < #buffer then
         io.write(string.format("\27[%dD", #buffer - cpos))
@@ -125,9 +179,25 @@ local function readline(opts)
         ; -- this is a weird lua quirk
         (type(opts.exit) == "function" and opts.exit or os.exit)()
       elseif key == "i" then -- tab
-        if type(opts.complete) == "function" and cpos == 0 then
+        if type(complete) == "function" then
           local obuffer = buffer
-          buffer = opts.complete(buffer, rlid) or buffer
+          local completions = complete(buffer, #buffer - cpos) or empty
+          if #completions == 1 then
+            buffer = buffer:sub(0, #buffer - cpos) .. completions[1]
+              .. buffer:sub(#buffer - cpos + 1)
+            io.write("\27[J")
+          else
+            local lines = tabulate(completions, w)
+
+            local x, y = termio.getCursor()
+            if y + #lines > h then
+              y = y - (#lines - (h - y) + 1)
+            end
+            io.write(string.format("\27[%dD\n", cpos))
+            print(table.concat(lines, "\n"))
+            termio.setCursor(x, y)
+          end
+
           if obuffer ~= buffer and #obuffer > 0 then
             io.write(string.format("\27[%dD", #obuffer - cpos))
             cpos = 0
