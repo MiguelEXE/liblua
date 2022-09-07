@@ -1,4 +1,6 @@
--- serializer --
+--- Barebones table serialization and deserialization.
+-- @module serialization
+-- @alias lib
 
 local function ser(va, seen)
   if type(va) ~= "table" then
@@ -17,8 +19,26 @@ local function ser(va, seen)
   return ret .. "}"
 end
 
-return {serialize = function(tab)
+local lib = {}
+
+local checkArg = require("checkArg")
+
+--- Serialize a table.
+-- @tparam table tab Table to serialize
+-- @treturn string The serialized table
+function lib.serialize(tab)
+  checkArg(1, tab, "table")
   return ser(tab, {})
-end, deserialize = function(str)
-  return assert(load("return " .. str, "=(deserialize)", "t", {}))()
-end}
+end
+
+--- Deserialize a table.
+-- @tparam str string The text to try to deserialize
+-- @treturn table The deserialized table
+function lib.deserialize(str)
+  checkArg(1, str, "string")
+  local ok, err = load("return " .. str, "=(deserialize)", "t", {})
+  if not ok then return nil, err end
+  return ok()
+end
+
+return lib
