@@ -44,19 +44,21 @@ local function defaultComplete(buffer, cpos)
       end
     end
   end
-  return results
+  return results, base
 end
 
-local function tabulate(text, w)
+local function tabulate(text, w, add)
   local lines = {""}
+  add = add or ""
   local max = 0
   table.sort(text)
-  for i=1, #text, 1 do max = math.max(max, #text[i]) end
+  for i=1, #text, 1 do max = math.max(max, #add + #text[i]) end
+
   for i=1, #text, 1 do
     if #lines[#lines] + max > w then
-      lines[#lines+1] = text[i] .. (" "):rep(max - #text[i])
+      lines[#lines+1] = add .. text[i] .. (" "):rep(max - (#add + #text[i]))
     else
-      lines[#lines] = lines[#lines] .. text[i]
+      lines[#lines] = lines[#lines] .. add .. text[i]
     end
     if #lines[#lines] + 2 > w then
       lines[#lines+1] = ""
@@ -181,19 +183,41 @@ local function readline(opts)
       elseif key == "i" then -- tab
         if type(complete) == "function" then
           local obuffer = buffer
-          local completions = complete(buffer, #buffer - cpos) or empty
+          local completions, base = complete(buffer, #buffer - cpos)
+          completions = completions or empty
           if #completions == 1 then
             buffer = buffer:sub(0, #buffer - cpos) .. completions[1]
               .. buffer:sub(#buffer - cpos + 1)
             io.write("\27[J")
-          else
-            local lines = tabulate(completions, w)
+          elseif #completions > 1 then
+            local lines = tabulate(completions, w, base)
+
+            local common = completions[1] or ""
+            for i=1, #completions, 1 do
+              local text = completions[i]
+
+              if #text < #common then common = common:sub(1, #text) end
+              if text:sub(1, #common) ~= common then
+                repeat
+                  common = common:sub(1, -2)
+                until text:sub(1, #common) == common or #common == 0
+              end
+
+              if #common == 0 then break end
+            end
+
+            if #common > 0 then
+              buffer = buffer:sub(0, #buffer - cpos) .. common
+                .. buffer:sub(#buffer - cpos + 1)
+              io.write("\27[J")
+            end
 
             local x, y = termio.getCursor()
             if y + #lines > h then
               y = y - (#lines - (h - y) + 1)
             end
             io.write(string.format("\27[%dD\n", cpos))
+            io.write("\27[J")
             print(table.concat(lines, "\n"))
             termio.setCursor(x, y)
           end
