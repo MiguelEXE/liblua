@@ -32,7 +32,7 @@ function lib.serialize(tab)
 end
 
 --- Deserialize a table.
--- @tparam str string The text to try to deserialize
+-- @tparam string str The text to try to deserialize
 -- @treturn table The deserialized table
 function lib.deserialize(str)
   checkArg(1, str, "string")
