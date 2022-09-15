@@ -96,7 +96,7 @@ function lib.update_group(group)
     return nil, errno.errno(errno.EBUSY), errno.EBUSY
   end
 
-  local entries, added = {}, true
+  local entries, added = {}, false
   for entry in lib.getgrent do
     if entry.gr_gid == group.gr_gid then
       entries[#entries+1] = group
