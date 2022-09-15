@@ -67,6 +67,7 @@ function lib.bmptostr(bitmap)
   for i=#order, 1, -1 do
     if (bitmap & order[i]) ~= 0 then
       ret = ret .. reverse[i]
+
     else
       ret = ret .. "-"
     end

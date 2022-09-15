@@ -66,7 +66,7 @@ function lib.signal(signum, handler)
     return nil, errno.errno(errno.EINVAL), errno.EINVAL
   end
 
-  return sys.sigaction(lookup[signum], handler or default)
+  return sys.sigaction(lookup[signum], handler)
 end
 
 return lib

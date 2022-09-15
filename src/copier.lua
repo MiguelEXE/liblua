@@ -3,7 +3,6 @@
 -- @module copier
 -- @alias lib
 
-
 local lib = {}
 local checkArg = require("checkArg")
 
@@ -15,6 +14,7 @@ local function deepcopy(orig, copies)
   if orig_type == 'table' then
     if copies[orig] then
       copy = copies[orig]
+
     else
       copy = {}
       copies[orig] = copy
@@ -25,6 +25,7 @@ local function deepcopy(orig, copies)
 
       setmetatable(copy, deepcopy(getmetatable(orig), copies))
     end
+
   else -- number, string, boolean, etc
     copy = orig
   end

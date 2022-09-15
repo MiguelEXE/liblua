@@ -32,7 +32,9 @@ function lib.getopt(_opts, _args)
   local skip_next, done = false, false
 
   for i, arg in ipairs(_args) do
-    if skip_next then skip_next = false
+    if skip_next then
+      skip_next = false
+
     elseif arg:sub(1,1) == "-" and not done then
       if arg == "--" and opts.allow_finish then
         done = true
@@ -165,6 +167,7 @@ function lib.build(supported)
   for i=1, #supported, 1 do
     local opt = supported[i]
     local use = {}
+
     for n=3, #opt, 1 do
       options[opt[n]] = not not opt[2]
       use[#use+1] = (#opt[n] == 1 and "-" or "--") .. opt[n]
@@ -177,6 +180,7 @@ function lib.build(supported)
   return options, "  " .. table.concat(usage, "\n  "), function(opts)
     for i=1, #supported, 1 do
       local opt = supported[i]
+
       for n=3, #opt, 1 do
         opts[opt[3]] = opts[opt[n]]
         if opts[opt[3]] then break end

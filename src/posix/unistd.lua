@@ -128,13 +128,13 @@ local function searchpath(path, argt)
     local search = entry .. "/" .. path
     local searchwe = search .. ".lua"
 
-    local statx, err = sys.stat(search)
+    local statx, _ = sys.stat(search)
     if statx then
       argt[0] = argt[0] or path
       return search, argt
     end
 
-    local statxwe, errwe = sys.stat(searchwe)
+    local statxwe, _ = sys.stat(searchwe)
     if statxwe then
       argt[0] = argt[0] or path
       return searchwe, argt
@@ -254,10 +254,13 @@ function lib.rmdir(path)
 
   local statx, err = sys.stat(path)
   if not statx then return nil, errno.errno(err), err end
-  if stat.S_ISDIR(statx.mode) == 0 then return nil, k.errno.ENOTDIR end
+
+  if stat.S_ISDIR(statx.mode) == 0 then return nil,
+    errno.errno(errno.ENOTDIR), errno.ENOTDIR end
 
   local fd, _err = sys.opendir(path)
   if not fd then return nil, errno.errno(_err), _err end
+
   local ent = sys.readdir(fd)
   sys.close(fd)
 

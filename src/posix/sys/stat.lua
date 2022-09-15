@@ -86,6 +86,7 @@ lib.stat = lib.lstat
 function lib.mkdir(path, mode)
   checkArg(1, path, "string")
   checkArg(2, mode, "number")
+
   local done, eno = sys.mkdir(path, mode or 511)
   if not done then
     return nil, errno.errno(eno), eno

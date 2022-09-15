@@ -7,8 +7,10 @@ local function unpackResult(result)
     if type(result[2]) == "string" then
       error(result[2], 0)
     end
+
     return nil, result[2]
   end
+
   return table.unpack(result, 1, result.n)
 end
 
@@ -17,6 +19,7 @@ setmetatable(lib, {__index = function(_, key)
     local result = table.pack(coroutine.yield("syscall", key, ...))
     return unpackResult(result)
   end
+
   return lib[key]
 end})
 

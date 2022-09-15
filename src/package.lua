@@ -24,8 +24,8 @@ end, __newindex = function() end})
 
 package.preload = {}
 
-local function loadlib()
-  error("loadlib not implemented yet")
+local function loadlib(_)
+  error("loadlib is not implemented yet")
 end
 
 package.searchers = {
@@ -33,6 +33,7 @@ package.searchers = {
   function(mod)
     if package.preload[mod] then
       return package.preload[mod]
+
     else
       return nil, "no field package.preload['"..mod.."']"
     end
@@ -74,6 +75,7 @@ local function syscall(...)
   if type(err) == "string" then
     error(err)
   end
+
   return res, err
 end
 
@@ -94,6 +96,7 @@ function package.searchpath(name, path, sep, rep)
     local stat = syscall("stat", search)
     if stat and (stat.mode & 0x4000) == 0 then
       return search
+
     else
       if #emsg > 0 then emsg = emsg .. "\n  " end
       emsg = emsg .. "no file '"..search.."'"
@@ -138,6 +141,7 @@ function _G.require(mod)
     if result then
       loaded[mod] = result
       return result
+
     else
       emsg = emsg .. "\n  " .. err
     end

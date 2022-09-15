@@ -43,6 +43,7 @@ end
 
 function lib.tcgetattr(fd)
   checkArg(1, fd, "number")
+
   local attrs, err = sys.ioctl(fd, "getattrs")
   if not attrs then
     return nil, errno.errno(err), err
@@ -55,8 +56,8 @@ function lib.tcgetattr(fd)
   return ret
 end
 
-function lib.tcsetattr(fd, _, attr)
-
+function lib.tcsetattr(_, _, _)
+  error("tcsetattr not implemented")
 end
 
 return lib

@@ -27,6 +27,7 @@ local _iost = {
 
   lines = function(self, fmt)
     if self.closed then return nil, get_err(errno.EBADF) end
+
     return function()
       return self:read(fmt or "l")
     end
@@ -35,6 +36,7 @@ local _iost = {
   write = function(self, ...)
     if self.closed then return nil, get_err(errno.EBADF) end
     local to_write = table.pack(...)
+
     for _, data in ipairs(to_write) do
       sys.write(self.fd, data)
     end
@@ -54,6 +56,7 @@ local _iost = {
   close = function(self)
     if self.closed then return nil, get_err(errno.EBADF) end
     self.closed = true
+
     return sys.close(self.fd)
   end,
 
@@ -61,6 +64,7 @@ local _iost = {
     if self.closed then return nil, get_err(errno.EBADF) end
     local ok, err = sys.ioctl(self.fd, "setvbuf", mode)
     if not ok then return nil, get_err(err) end
+
     return ok
   end,
 }
@@ -115,6 +119,7 @@ function lib.input(file)
     lib.stdin:close()
     lib.stdin = file
   end
+
   return lib.stdin
 end
 
@@ -125,6 +130,7 @@ function lib.output(file)
     lib.stdout:close()
     lib.stdout = file
   end
+
   return lib.stdout
 end
 
@@ -149,9 +155,11 @@ function lib.popen(command, mode)
   sys.fork(function()
     if mode == "r" then
       sys.dup2(1, infd)
+
     else
       sys.dup2(0, outfd)
     end
+
     local tokens = require("sh").split(command)
     tokens[0] = table.remove(tokens, 1)
     local resolved, failed = require("sh").resolve(tokens[0])

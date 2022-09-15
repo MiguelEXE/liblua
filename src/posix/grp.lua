@@ -18,6 +18,7 @@ local function to_fields(line)
   for c in line:gmatch(".") do
     if c == ":" then
       fields[#fields+1] = ""
+
     else
       fields[#fields] = fields[#fields] .. c
     end
@@ -28,10 +29,13 @@ local function to_fields(line)
   for i=1, #fields, 1 do
     if fields[i]:find(",") then
       local val = {}
+
       for name in fields[i]:gmatch("[^,]+") do
         val[#val+1] = name
       end
+
       ret[field_names[i]] = val
+
     else
       ret[field_names[i]] = tonumber(fields[i]) or fields[i]
     end
@@ -62,12 +66,14 @@ end
 
 local function search(field, value)
   lib.setgrent()
+
   for entry in lib.getgrent do
     if entry[field] == value then
       lib.endgrent()
       return entry
     end
   end
+
   lib.endgrent()
 end
 
@@ -101,6 +107,7 @@ function lib.update_group(group)
     if entry.gr_gid == group.gr_gid then
       entries[#entries+1] = group
       added = true
+
     else
       entries[#entries+1] = entry
     end
@@ -116,9 +123,11 @@ function lib.update_group(group)
 
   for i=1, #entries, 1 do
     local fields = {}
+
     for j=1, #field_names, 1 do
       if type(entries[i][field_names[j]]) == "table" then
         fields[j] = table.concat(entries[i][field_names[j]], ",")
+
       else
         fields[j] = tostring(entries[i][field_names[j]] or "")
       end

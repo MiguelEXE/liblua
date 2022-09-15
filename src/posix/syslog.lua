@@ -61,6 +61,7 @@ end
 function lib.syslog(priority, message)
   checkArg(1, priority, "number")
   checkArg(2, message, "string")
+
   local opts = opened[getpid()] or {id = read("/proc/self/cmdline/0"),
     opt = lib.LOG_PID, facility = 1}
 

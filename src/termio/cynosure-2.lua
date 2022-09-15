@@ -8,6 +8,7 @@ function handler.setRaw(raw)
   if raw then
     sys.ioctl(0, "stty", {echo=false, raw=true})
     sys.ioctl(0, "setvbuf", "none")
+
   else
     sys.ioctl(0, "stty", {echo=true, raw=false})
     sys.ioctl(0, "setvbuf", "line")

@@ -15,6 +15,7 @@ return {
     if type(argv[1]) == "table" then
       return argv[1]
     end
+
     argv[0] = cmd
     return argv
   end

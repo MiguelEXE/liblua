@@ -15,10 +15,12 @@ function lib.wait(pid, options)
 
   pid = pid or -1
   options = options or 0
+
   local reason, status
   if pid == -1 then
     pid, reason, status = sys.waitany(options & lib.WNOHANG == 0,
       options & lib.WUNTRACED ~= 0)
+
   else
     reason, status = sys.wait(pid, options & lib.WNOHANG ~= 0,
       options & lib.WUNTRACED ~= 0)

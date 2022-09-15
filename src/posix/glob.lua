@@ -62,11 +62,13 @@ function lib.glob(pat, flags)
             local name = table.concat({
               stage, file, table.concat(segments, "/", i + 1)
             }, "/"):gsub("[/\\]+", "/")
+
             local sx = stat.stat(name)
             if sx then
               if stat.S_ISDIR(sx.st_mode)==0 or (flags&lib.GLOB_MARK==0) then
                 name = name:sub(1, -2)
               end
+
               names[#names+1] = name
             end
           end

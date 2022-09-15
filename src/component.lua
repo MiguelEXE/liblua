@@ -16,6 +16,7 @@ local function is(ctype, want, exact)
 
   if exact then
     return ctype:sub(0, #want) == want
+
   else
     return not not ctype:match(want)
   end
@@ -35,6 +36,7 @@ function component.list(ctype, exact)
       for comp in files(components..comptype) do
         local fd = open(components..comptype.."/"..comp, "r")
         local address = ioctl(fd, "address")
+
         map[address] = {id=comp, type=comptype, slot=ioctl(fd, "slot")}
         ret[address] = comptype
       end
@@ -44,6 +46,7 @@ function component.list(ctype, exact)
   local k
   setmetatable(ret, {__call = function()
     k = next(ret, k)
+
     if k then return k, ret[k], string.format("%s%s/%s", components,
       map[k].type, map[k].id) end
   end})
@@ -66,7 +69,6 @@ end
 function component.proxy(address)
   checkArg(1, address, "string")
 
-
   local entry, err = get(address)
   if not entry then
     return nil, err
@@ -79,6 +81,7 @@ function component.proxy(address)
   for method, direct in pairs(methods) do
     if direct then
       local doc = ioctl(fd, "doc", method)
+
       proxy[method] = setmetatable({}, {__call = function(_, ...)
         return ioctl(fd, "invoke", method, ...)
       end, __tostring = function() return doc end})
@@ -97,6 +100,7 @@ local function invoke(address, ...)
   local fd = open(components..entry.type.."/"..entry.id, "r")
   local result = table.pack(ioctl(fd, "invoke", ...))
   close(fd)
+
   return table.unpack(result, 1, result.n)
 end
 

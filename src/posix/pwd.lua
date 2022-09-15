@@ -21,6 +21,7 @@ local function to_fields(line)
   for c in line:gmatch(".") do
     if c == ":" then
       fields[#fields+1] = ""
+
     else
       fields[#fields] = fields[#fields] .. c
     end
@@ -96,10 +97,12 @@ function lib.update_passwd(passwd)
     if entry.pw_uid == passwd.pw_uid then
       entries[#entries+1] = passwd
       added = true
+
     else
       entries[#entries+1] = entry
     end
   end
+
   lib.endpwent()
 
   if not added then entries[#entries+1] = passwd end
@@ -114,6 +117,7 @@ function lib.update_passwd(passwd)
     for j=1, #field_names, 1 do
       fields[j] = tostring(entries[i][field_names[j]] or "")
     end
+
     handle:write(table.concat(fields, ":").."\n")
   end
 

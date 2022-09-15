@@ -18,6 +18,7 @@ function lib.setCursor(x, y)
   if not getHandler().ttyOut() then
     return
   end
+
   io.write(string.format("\27[%d;%dH", y, x))
 end
 
@@ -83,6 +84,7 @@ local function getChar(char)
   if byte + 96 > 255 then
     return utf8.char(byte)
   end
+
   return string.char(96 + byte)
 end
 
@@ -110,6 +112,7 @@ function lib.readKey()
       repeat
         local c = io.stdin:read(1)
         data = data .. c
+
         if c:match("[a-zA-Z]") then
           key = c
         end
@@ -124,16 +127,21 @@ function lib.readKey()
       end
 
       key = substitutions[key] or "unknown"
+
     else
       key = io.stdin:read(1)
       flags = {alt = true}
     end
+
   elseif data:byte() > 31 and data:byte() < 127 then
     key = data
+
   elseif data:byte() == (getHandler().keyBackspace or 127) then
     key = "backspace"
+
   elseif data:byte() == (getHandler().keyDelete or 8) then
     key = "delete"
+
   else
     key = getChar(data)
     flags = {ctrl = true}

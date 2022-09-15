@@ -19,13 +19,13 @@ default.cc[2] = handler.keyBackspace
 function handler.setRaw(_raw)
   if _raw then
     termio.tcsetattr(0, termio.TCSANOW, raw)
+
   else
     termio.tcsetattr(0, termio.TCSANOW, default)
   end
 end
 
-function handler.cursorVisible(v)
-  
+function handler.cursorVisible(_)
 end
 
 function handler.ttyIn() return isatty(0) == 1 end
