@@ -94,4 +94,21 @@ function lib.mkdir(path, mode)
   return 0
 end
 
+function lib.chmod(path, mode)
+  checkArg(1, path, "string")
+  checkArg(2, mode, "number")
+
+  local done, eno = sys.chmod(path, mode)
+  if not done then
+    return nil, errno.errno(eno), eno
+  end
+
+  return 0
+end
+
+function lib.umask(mode)
+  checkArg(1, mode, "number")
+  return sys.umask(mode)
+end
+
 return lib
