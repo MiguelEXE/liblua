@@ -42,7 +42,7 @@ function lib.tree(path, modify, foreach)
       foreach(full)
     end
 
-    if stat.S_ISDIR(info.st_mode) then
+    if stat.S_ISDIR(info.st_mode) == 1 then
       local ok, ___err = lib.tree(path .. "/" .. files[i])
       if not ok then
         return nil, ___err
