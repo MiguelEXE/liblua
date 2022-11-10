@@ -29,3 +29,9 @@ function os.execute(cmd)
     return exit == 0, status, exit
   end
 end
+
+function os.remove(file)
+  checkArg(1, file, "string")
+
+  os.execute("rm " .. file)
+end
