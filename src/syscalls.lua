@@ -8,7 +8,7 @@ local function unpackResult(result)
       error(result[2], 0)
     end
 
-    return nil, result[2]
+    return nil, result[3] or result[2]
   end
 
   return table.unpack(result, 1, result.n)
