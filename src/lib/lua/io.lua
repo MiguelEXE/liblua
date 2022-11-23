@@ -88,7 +88,7 @@ function lib.open(path, mode)
 
   local fd, err = sys.open(path, mode)
   if not fd then
-    return nil, get_err(err)
+    return nil, path .. ": " .. get_err(err)
   end
 
   return mkiost(fd)
