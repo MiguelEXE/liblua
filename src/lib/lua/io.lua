@@ -144,7 +144,9 @@ function lib.lines(file, ...)
   if mode.n == 0 then mode = {"l", n = 1} end
 
   return function()
-    return handle:read(table.unpack(mode, 1, mode.n))
+    local result = table.pack(handle:read(table.unpack(mode, 1, mode.n)))
+    if not result[1] then handle:close() end
+    return table.unpack(result, 1, result.n)
   end
 end
 

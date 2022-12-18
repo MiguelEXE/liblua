@@ -36,6 +36,7 @@ function component.list(ctype, exact)
       for comp in files(components..comptype) do
         local fd = open(components..comptype.."/"..comp, "r")
         local address = ioctl(fd, "address")
+        close(fd)
 
         map[address] = {id=comp, type=comptype, slot=ioctl(fd, "slot")}
         ret[address] = comptype
@@ -66,6 +67,19 @@ local function get(address)
   return map[address]
 end
 
+local function invoke(address, ...)
+  local entry, err = get(address)
+  if not entry then
+    return nil, err
+  end
+
+  local fd = open(components..entry.type.."/"..entry.id, "r")
+  local result = table.pack(ioctl(fd, "invoke", ...))
+  close(fd)
+
+  return table.unpack(result, 1, result.n)
+end
+
 function component.proxy(address)
   checkArg(1, address, "string")
 
@@ -82,26 +96,17 @@ function component.proxy(address)
     if direct then
       local doc = ioctl(fd, "doc", method)
 
+      -- TODO: is there a less leaky way of doing this better?
       proxy[method] = setmetatable({}, {__call = function(_, ...)
-        return ioctl(fd, "invoke", method, ...)
+        return invoke(address, method, ...)
+        --ioctl(fd, "invoke", method, ...)
       end, __tostring = function() return doc end})
     end
   end
 
-  return proxy
-end
-
-local function invoke(address, ...)
-  local entry, err = get(address)
-  if not entry then
-    return nil, err
-  end
-
-  local fd = open(components..entry.type.."/"..entry.id, "r")
-  local result = table.pack(ioctl(fd, "invoke", ...))
   close(fd)
 
-  return table.unpack(result, 1, result.n)
+  return proxy
 end
 
 local function field(address, key)
