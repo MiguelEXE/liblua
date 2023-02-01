@@ -197,4 +197,20 @@ end
 -- @tfield[opt] string 4 The long name of the option
 -- @table Supported
 
+--- Process options more easily.
+-- Effectively @{build} and @{getopt} combined.
+-- For example usage, see @{getopt.process.lua}.
+-- @tparam table parameters An amalgamation of the arguments given to @{build} and @{getopt}, with the addition of an `args` field to hold the raw arguments.
+-- @treturn table The arguments left over
+-- @treturn table The options left over
+-- @treturn string Usage information for the given options.
+function lib.process(parameters)
+  checkArg(1, parameters, "table")
+  local options, usage, condense = lib.build(parameters)
+  parameters.options = options
+  local args, opts = lib.getopt(parameters, parameters.args)
+  condense(opts)
+  return args, opts, usage
+end
+
 return lib
