@@ -9,7 +9,7 @@ _G.package = {}
 package.config = "/\n;\n?\n!\n-"
 package.cpath = "/lib/?.csl;/usr/lib/?.csl;./?.csl"
 package.path = "/lib/lua/?.lua;/lib/lua/?/init.lua;" ..
-  "/usr/lib/lua/?.lua;/usr/lib/lua/?/init.lua"
+  "/usr/lib/lua/?.lua;/usr/lib/lua/?/init.lua;./?.lua;./?/init.lua"
 
 local loaded = {checkArg = checkArg}
 _G.checkArg = nil
