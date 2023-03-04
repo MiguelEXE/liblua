@@ -14,6 +14,7 @@ local checkArg = require("checkArg")
 -- @tfield boolean exit_on_bad_opt Whether it is an error to find an invalid option (one not specified in the `options` table).
 -- @tfield boolean finish_after_arg Whether to stop processing options after any non-option argument is reached.
 -- @tfield boolean can_repeat_opts Whether options may be repeated.
+-- @tfield boolean exclude_numbers Whether to exclude numbers from short options, e.g. `-700`
 -- @table options
 
 --- Process program arguments according to the given options.
@@ -76,7 +77,10 @@ function lib.getopt(_opts, _args)
       else
         arg = arg:sub(2)
 
-        if _opts.options[arg:sub(1,1)] then
+        if tonumber(arg) and _opts.exclude_numers then
+          args[#args+1] = "-"..arg
+
+        elseif _opts.options[arg:sub(1,1)] then
           local a = arg:sub(1,1)
 
           if #arg == 1 then
@@ -102,7 +106,7 @@ function lib.getopt(_opts, _args)
           for c in arg:gmatch(".") do
             if _opts.options[c] == nil then
               if _opts.exit_on_bad_opt then
-                io.stderr:write("unrecognized option '", arg, "'\n")
+                io.stderr:write("unrecognized option '", c, "'\n")
 
                 if _opts.help_message then
                   io.stderr:write(_opts.help_message)
