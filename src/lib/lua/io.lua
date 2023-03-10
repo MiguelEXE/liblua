@@ -38,7 +38,7 @@ local _iost = {
     local to_write = table.pack(...)
 
     for _, data in ipairs(to_write) do
-      sys.write(self.fd, data)
+      sys.write(self.fd, tostring(data))
     end
     return self
   end,
