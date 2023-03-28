@@ -40,11 +40,12 @@ function lib.tree(path, modify, foreach)
       tree[#tree+1] = path .. "/" .. files[i]
 
       if foreach then
-        foreach(full)
+        -- passing info here
+        foreach(tree[#tree], info)
       end
 
-      if stat.S_ISDIR(info.st_mode) == 1 then
-        local ok, ___err = lib.tree(path .. "/" .. files[i], tree)
+      if stat.S_ISDIR(info.st_mode) ~= 0 then
+        local ok, ___err = lib.tree(tree[#tree], tree, foreach)
         if not ok then
           return nil, ___err
         end
