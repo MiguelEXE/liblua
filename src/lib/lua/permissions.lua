@@ -39,7 +39,7 @@ local checkArg = require("checkArg")
 function lib.strtobmp(permstr)
   checkArg(1, permstr, "string")
 
-  if not permstr:match("[r%-][w%-][x%-][r%-][w%-][x%-][r%-][w%-][x%-]") then
+  if not permstr:match("[r%-][w%-][xs%-][r%-][w%-][x%-][r%-][w%-][x%-]") then
     return nil, errno.errno(errno.EINVAL)
   end
 
@@ -66,7 +66,14 @@ function lib.bmptostr(bitmap)
 
   for i=#order, 1, -1 do
     if (bitmap & order[i]) ~= 0 then
-      ret = ret .. reverse[i]
+      -- TODO: this is a bit hacky, is there a cleaner way to do it?
+      if i == 7 and (bitmap & 0x800) ~= 0 then -- setuid
+        ret = ret .. "s"
+      elseif i == 4 and (bitmap & 0x400) ~= 0 then -- setgid
+        ret = ret .. "s"
+      else
+        ret = ret .. reverse[i]
+      end
 
     else
       ret = ret .. "-"
