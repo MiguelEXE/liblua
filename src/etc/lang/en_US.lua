@@ -17,5 +17,7 @@
   EUNATCH     = "Protocol driver not attached",
   ELIBEXEC    = "Cannot directly execute a shared library",
   ENOPROTOOPT = "Protocol not available",
-  ENOTSUP     = "Operation not supported"
+  ENOTSUP     = "Operation not supported",
+  ENOSYS      = "Function not implemented",
+  ENOTEMPTY   = "Directory is not empty",
 }

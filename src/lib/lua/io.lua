@@ -55,9 +55,9 @@ local _iost = {
 
   close = function(self)
     if self.closed then return nil, get_err(errno.EBADF) end
-    self.closed = true
-
-    return sys.close(self.fd)
+    local _, closed = sys.close(self.fd)
+    self.closed = self.closed or closed
+    return true
   end,
 
   setvbuf = function(self, mode)
